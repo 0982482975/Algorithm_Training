@@ -1,0 +1,161 @@
+mport java.io.*;
+import java.util.*;
+
+public class Main {
+
+    public static class FastIO {
+        InputStream dis;
+        byte[] buffer = new byte[1 << 17];
+        int pointer = 0;
+
+        public FastIO(String fileName) throws Exception {
+            dis = new FileInputStream(fileName);
+        }
+
+        public FastIO(InputStream is) {
+            dis = is;
+        }
+
+        int nextInt() throws Exception {
+            int ret = 0;
+            byte b;
+            do {
+                b = nextByte();
+            } while (b <= ' ');
+            boolean negative = false;
+            if (b == '-') {
+                negative = true;
+                b = nextByte();
+            }
+            while (b >= '0' && b <= '9') {
+                ret = 10 * ret + b - '0';
+                b = nextByte();
+            }
+            return (negative) ? -ret : ret;
+        }
+
+        long nextLong() throws Exception {
+            long ret = 0;
+            byte b;
+            do {
+                b = nextByte();
+            } while (b <= ' ');
+            boolean negative = false;
+            if (b == '-') {
+                negative = true;
+                b = nextByte();
+            }
+            while (b >= '0' && b <= '9') {
+                ret = 10 * ret + b - '0';
+                b = nextByte();
+            }
+            return (negative) ? -ret : ret;
+        }
+
+        Integer[] readArray(int n) throws Exception {
+            Integer[] a = new Integer[n];
+            for (int i = 0; i < n; i++) a[i] = nextInt();
+            return a;
+        }
+
+        byte nextByte() throws Exception {
+            if (pointer == buffer.length) {
+                dis.read(buffer, 0, buffer.length);
+                pointer = 0;
+            }
+            return buffer[pointer++];
+        }
+
+        String next() throws Exception {
+            StringBuilder ret = new StringBuilder();
+            byte b;
+            do {
+                b = nextByte();
+            } while (b <= ' ');
+            while (b >= ' ') {
+                ret.appendCodePoint(b);
+                b = nextByte();
+            }
+            return ret.toString();
+        }
+
+        public void close() throws Exception {
+            if (dis == null) return;
+            dis.close();
+        }
+    }
+   
+    public static void main(String[] args) throws Exception {
+        FastIO scan = new FastIO(System.in);
+        int amo = scan.nextInt();
+        Integer[] arr = scan.readArray(amo);
+        String err = "no solution";
+        String[] opeLi = {"*", "/", "+", "-"};
+        List<String[]> list = new ArrayList<>();
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
+                for (int k = 0; k < 4; k++) {
+                    String[] opeSet = new String[6];
+                    opeSet[0] = opeLi[i];
+                    opeSet[1] = opeLi[j];
+                    opeSet[2] = opeLi[k];
+                    opeSet[3] = opeSet[4] = opeSet[5] = ".";
+                    list.add(opeSet);
+                }
+        Map<Integer, String[]> map = new HashMap<>();
+        list.forEach(e -> {
+            int reF = 4, reL = Integer.MAX_VALUE;
+            boolean flag = false;
+            int value = 4;
+            int idx = 3;
+            for (int i = 0; i < 3; i++) {
+                if (e[i].equals("+") || e[i].equals("-")) {
+                    if (i < 2 && e[i].equals("-") && (e[i + 1].equals("*") || e[i + 1].equals("/"))) {
+                        value = -4;
+                        if(i>0&& (e[i-1].equals("*")||e[i-1].equals("/")))
+                            continue;
+                        e[idx++] = "+";
+                    } else {
+                        if(i>0&& (e[i-1].equals("*")||e[i-1].equals("/"))&&(e[i + 1].equals("*") || e[i + 1].equals("/")))
+                            continue;
+                        e[idx++] = e[i];
+                    }
+                } else {
+                    boolean isMul = e[i].equals("*");
+                    if (!flag) {
+                        reF = isMul ? value * 4 : value / 4;
+                        value = 4;
+                        flag = true;
+                    } else {
+                        if (i >= 1 && (e[i - 1].equals("*") || e[i - 1].equals("/"))) {
+                            reF = isMul ? reF * 4 : reF / 4;
+                        } else {
+                            reL = isMul ? value * 4 : value / 4;
+                            value = 4;
+                        }
+                    }
+                }
+            }
+            if (reL != Integer.MAX_VALUE)
+                reF += reL;
+            for (int i = 3; i < 6; i++) {
+                if (e[i].equals("."))
+                    break;
+                reF = e[i].equals("+") ? reF + 4 : reF - 4;
+            }
+            map.put(reF, e);
+        });
+        Arrays.asList(arr).forEach(e->{
+            if(e<-60||e>256)
+                System.out.println(err);
+            else {
+                if (map.containsKey(e))
+                    System.out.printf("4 %s 4 %s 4 %s 4 = %d%n",
+                            map.get(e)[0], map.get(e)[1], map.get(e)[2], e);
+                else
+                    System.out.println(err);
+            }
+        });
+    }
+
+}
