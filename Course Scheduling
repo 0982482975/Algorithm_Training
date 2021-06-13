@@ -1,0 +1,193 @@
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
+
+public class Main {
+    static class InputReader {
+
+        InputStream is = System.in;
+        byte[] inbuf = new byte[1 << 25];
+        int lenbuf = 0, ptrbuf = 0;
+
+        public InputReader() throws IOException {
+            lenbuf = is.read(inbuf);
+        }
+
+        public int readByte() {
+
+            if (ptrbuf >= lenbuf) {
+                return -1;
+            }
+
+            return inbuf[ptrbuf++];
+        }
+
+        public boolean hasNext() {
+            int t = skip();
+
+            if (t == -1) {
+                return false;
+            }
+            ptrbuf--;
+            return true;
+        }
+
+        public boolean isSpaceChar(int c) {
+            return !(c >= 32 && c <= 126);
+        }
+
+        public int skip() {
+            int b;
+            while ((b = readByte()) != -1 && isSpaceChar(b))
+                ;
+            return b;
+        }
+
+        public double nextDouble() {
+            return Double.parseDouble(next());
+        }
+
+        public char nextChar() {
+            return (char) skip();
+        }
+
+        public String next() {
+            int b = skip();
+            StringBuilder sb = new StringBuilder();
+            while (!(isSpaceChar(b))) {
+                sb.appendCodePoint(b);
+                b = readByte();
+            }
+            return sb.toString();
+        }
+
+        public char[] ns(int n) {
+            char[] buf = new char[n];
+            int b = skip(), p = 0;
+            while (p < n && !(isSpaceChar(b))) {
+                buf[p++] = (char) b;
+                b = readByte();
+            }
+            return n == p ? buf : Arrays.copyOf(buf, p);
+        }
+
+        public char[][] nm(int n, int m) {
+            char[][] map = new char[n][];
+            for (int i = 0; i < n; i++) {
+                map[i] = ns(m);
+            }
+            return map;
+        }
+
+        public int[] na(int n) {
+            int[] a = new int[n];
+            for (int i = 0; i < n; i++) {
+                a[i] = nextInt();
+            }
+            return a;
+        }
+
+        public int nextInt() {
+            int num = 0, b;
+            boolean minus = false;
+            while ((b = readByte()) != -1 && !((b >= '0' && b <= '9') || b == '-'))
+                ;
+            if (b == '-') {
+                minus = true;
+                b = readByte();
+            }
+
+            while (true) {
+                if (b >= '0' && b <= '9') {
+                    num = num * 10 + (b - '0');
+                } else {
+                    return minus ? -num : num;
+                }
+                b = readByte();
+            }
+        }
+
+        public long nextLong() {
+            long num = 0;
+            int b;
+            boolean minus = false;
+            while ((b = readByte()) != -1 && !((b >= '0' && b <= '9') || b == '-'))
+                ;
+            if (b == '-') {
+                minus = true;
+                b = readByte();
+            }
+
+            while (true) {
+                if (b >= '0' && b <= '9') {
+                    num = num * 10 + (b - '0');
+                } else {
+                    return minus ? -num : num;
+                }
+                b = readByte();
+            }
+        }
+
+    }
+
+    static class Name{
+        Map<String, Set<String>> nameMap;
+        int size=1;
+        Name(Map<String, Set<String>> nameMap){
+            this.nameMap= nameMap;
+        }
+        public void changeSize(){
+            this.size++;
+        }
+
+        public int getSize() {
+            return size;
+        }
+
+        public Map<String, Set<String>> getNameMap() {
+            return nameMap;
+        }
+    }
+    public static void main(String[] args) {
+        InputReader inputReader = null;
+        try {
+            inputReader = new InputReader();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int amo = inputReader.nextInt();
+        Map<String, Name> map = new HashMap<>();
+        for (int i =0; i< amo; i++ ) {
+            String str = inputReader.next();
+            int fIndxB = str.indexOf(" ");
+            int lIndxB = str.lastIndexOf(" ");
+            Map<String, Set<String>> mapName = new HashMap<>();
+            Set<String> setName = new HashSet<>();
+            String course = str.substring(lIndxB + 1);
+            String fName = str.substring(0, fIndxB);
+            String lName = str.substring(fIndxB + 1, lIndxB);
+            if (map.containsKey(course)) {
+                if (map.get(course).getNameMap().containsKey(fName)) {
+                    if(!map.get(course).getNameMap().get(fName).contains(lName))
+                        map.get(course ).changeSize();
+                    map.get(course).getNameMap().get(fName).add(lName);
+
+                }
+                else {
+                    setName.add(lName);
+                    map.get(course).getNameMap().put(fName, setName);
+                    map.get(course).changeSize();
+                }
+            } else {
+                setName.add(lName);
+                mapName.put(fName, setName);
+                map.put(course,new Name(mapName));
+            }
+        }
+
+        map.keySet().stream().sorted().forEach(e-> System.out.println(e + " "+ map.get(e).getSize()));
+
+    }
+}
