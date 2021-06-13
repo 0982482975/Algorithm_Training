@@ -1,0 +1,137 @@
+import java.io.*;
+import java.util.*;
+import java.util.stream.Stream;
+
+public class Main {
+
+    public static class FastIO {
+        InputStream dis;
+        byte[] buffer = new byte[1 << 17];
+        int pointer = 0;
+
+        public FastIO(String fileName) throws Exception {
+            dis = new FileInputStream(fileName);
+        }
+
+        public FastIO(InputStream is) {
+            dis = is;
+        }
+
+        int nextInt() throws Exception {
+            int ret = 0;
+            byte b;
+            do {
+                b = nextByte();
+            } while (b <= ' ');
+            boolean negative = false;
+            if (b == '-') {
+                negative = true;
+                b = nextByte();
+            }
+            while (b >= '0' && b <= '9') {
+                ret = 10 * ret + b - '0';
+                b = nextByte();
+            }
+            return (negative) ? -ret : ret;
+        }
+
+        long nextLong() throws Exception {
+            long ret = 0;
+            byte b;
+            do {
+                b = nextByte();
+            } while (b <= ' ');
+            boolean negative = false;
+            if (b == '-') {
+                negative = true;
+                b = nextByte();
+            }
+            while (b >= '0' && b <= '9') {
+                ret = 10 * ret + b - '0';
+                b = nextByte();
+            }
+            return (negative) ? -ret : ret;
+        }
+
+        Integer[] readArray(int n) throws Exception {
+            Integer[] a = new Integer[n];
+            for (int i = 0; i < n; i++) a[i] = nextInt();
+            return a;
+        }
+
+        byte nextByte() throws Exception {
+            if (pointer == buffer.length) {
+                dis.read(buffer, 0, buffer.length);
+                pointer = 0;
+            }
+            return buffer[pointer++];
+        }
+
+        String next() throws Exception {
+            StringBuilder ret = new StringBuilder();
+            byte b;
+            do {
+                b = nextByte();
+            } while (b <= ' ');
+            while (b >= ' ') {
+                ret.appendCodePoint(b);
+                b = nextByte();
+            }
+            return ret.toString();
+        }
+
+        public void close() throws Exception {
+            if (dis == null) return;
+            dis.close();
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        FastIO scan = new FastIO(System.in);
+        int amo = scan.nextInt();
+        String[] arr = new String[amo];
+        for (int i = 0; i < amo; i++)
+            arr[i] = scan.next();
+        int idx = amo - 1;
+        boolean flagAsc = false;
+        boolean flagDec = false;
+        boolean flagNei = false;
+        for (int i = 0; i < amo / 2; i++) {
+            int compare = arr[i].compareTo(arr[idx]);
+            if (compare < 0)
+                flagAsc = true;
+            else
+                flagDec = true;
+            if (flagAsc && flagDec) {
+                flagNei = true;
+                break;
+            }
+            idx--;
+        }
+        if (flagNei) {
+            System.out.println("NEITHER");
+            return;
+        }
+        if (amo % 2 != 0) {
+            int cmp1 = arr[amo / 2 - 1].compareTo(arr[amo / 2]);
+            int cmp2 = arr[amo / 2].compareTo(arr[amo / 2 + 1]);
+            if (cmp1 > 0 && cmp2 > 0) {
+                flagAsc = false;
+            }
+            else if (cmp1 < 0 && cmp2 < 0)
+                flagDec = false;
+            else
+                flagNei = true;
+        }
+        if (flagNei) {
+            System.out.println("NEITHER");
+            return;
+        }
+        if (flagAsc)
+            System.out.println("INCREASING");
+        if (flagDec)
+            System.out.println("DECREASING");
+
+    }
+
+}
