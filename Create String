@@ -1,0 +1,156 @@
+import java.io.*;
+import java.util.*;
+ 
+public class Main {
+    static String s;
+    static Set<StringBuffer > set = new HashSet<>();
+    static List<Integer> mark = new Vector<>();
+    static void Try(int time){
+        if(time>s.length())
+            return;
+        for(int i =0; i< s.length(); i++){
+            if(!mark.contains(i)) {
+                mark.add(i);
+                Try(time + 1);
+                if(time== s.length()){
+                    StringBuffer stringBuffer = new StringBuffer();
+                        mark.forEach(e-> {
+                        stringBuffer.append(s.charAt(e));
+                    });
+                     boolean flag =true;
+                     Iterator<StringBuffer> iterator= set.stream().iterator();
+                     while(iterator.hasNext()){
+                         if(iterator.next().compareTo(stringBuffer)==0){
+                             flag=false;
+                             break;
+                         }
+                     }
+                     if (flag)
+                         set.add(stringBuffer);
+ 
+                }
+                mark.remove(mark.indexOf(i));
+            }
+ 
+        }
+ 
+    }
+    public static void main(String[] args) throws IOException {
+        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(System.out));
+        s= ns();
+        Try(1);
+        bufferedWriter.write(set.size()+"\n");
+        set.stream().sorted().forEach(e->{
+            try {
+                bufferedWriter.write(e+"\n");
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
+        bufferedWriter.flush();
+        bufferedWriter.close();
+ 
+    }
+ 
+ 
+ 
+ 
+    static InputStream is = System.in;
+    static byte[] inbuf = new byte[1 << 24];
+    static int lenbuf = 0, ptrbuf = 0;
+ 
+    static int readByte() {
+        if (lenbuf == -1)
+            throw new InputMismatchException();
+        if (ptrbuf >= lenbuf) {
+            ptrbuf = 0;
+            try {
+                lenbuf = is.read(inbuf);
+            } catch (IOException e) {
+                throw new InputMismatchException();
+            }
+            if (lenbuf <= 0)
+                return -1;
+        }
+        return inbuf[ptrbuf++];
+    }
+ 
+    static boolean isSpaceChar(int c) {
+        return !(c >= 33 && c <= 126);
+    }
+ 
+    static int skip() {
+        int b;
+        while ((b = readByte()) != -1 && isSpaceChar(b))
+            ;
+        return b;
+    }
+ 
+    static double nd() {
+        return Double.parseDouble(ns());
+    }
+ 
+    static char nc() {
+        return (char) skip();
+    }
+ 
+    static String ns() {
+        int b = skip();
+        StringBuilder sb = new StringBuilder();
+        while (!(isSpaceChar(b))) {
+            sb.appendCodePoint(b);
+            b = readByte();
+        }
+        return sb.toString();
+    }
+ 
+    static char[] ns(int n) {
+        char[] buf = new char[n];
+        int b = skip(), p = 0;
+        while (p < n && !(isSpaceChar(b))) {
+            buf[p++] = (char) b;
+            b = readByte();
+        }
+        return n == p ? buf : Arrays.copyOf(buf, p);
+    }
+ 
+    static int ni() {
+        int num = 0, b;
+        boolean minus = false;
+        while ((b = readByte()) != -1 && !((b >= '0' && b <= '9') || b == '-'))
+            ;
+        if (b == '-') {
+            minus = true;
+            b = readByte();
+        }
+        while (true) {
+            if (b >= '0' && b <= '9') {
+                num = num * 10 + (b - '0');
+            } else {
+                return minus ? -num : num;
+            }
+            b = readByte();
+        }
+    }
+ 
+    static long nl() {
+        long num = 0;
+        int b;
+        boolean minus = false;
+        while ((b = readByte()) != -1 && !((b >= '0' && b <= '9') || b == '-'))
+            ;
+        if (b == '-') {
+            minus = true;
+            b = readByte();
+        }
+        while (true) {
+            if (b >= '0' && b <= '9') {
+                num = num * 10 + (b - '0');
+            } else {
+                return minus ? -num : num;
+            }
+            b = readByte();
+        }
+    }
+ 
+}
