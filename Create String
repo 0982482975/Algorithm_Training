@@ -1,64 +1,77 @@
+
 import java.io.*;
 import java.util.*;
- 
-public class Main {
-    static String s;
-    static Set<StringBuffer > set = new HashSet<>();
-    static List<Integer> mark = new Vector<>();
-    static void Try(int time){
-        if(time>s.length())
-            return;
-        for(int i =0; i< s.length(); i++){
-            if(!mark.contains(i)) {
-                mark.add(i);
-                Try(time + 1);
-                if(time== s.length()){
-                    StringBuffer stringBuffer = new StringBuffer();
-                        mark.forEach(e-> {
-                        stringBuffer.append(s.charAt(e));
-                    });
-                     boolean flag =true;
-                     Iterator<StringBuffer> iterator= set.stream().iterator();
-                     while(iterator.hasNext()){
-                         if(iterator.next().compareTo(stringBuffer)==0){
-                             flag=false;
-                             break;
-                         }
-                     }
-                     if (flag)
-                         set.add(stringBuffer);
- 
-                }
-                mark.remove(mark.indexOf(i));
-            }
- 
-        }
- 
+class Custom {
+    public String str;
+
+    Custom(String str){
+        this.str=str;
     }
+    @Override
+    public boolean equals(Object o) {
+        return ((Custom) o).str.compareTo(this.str) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return str.hashCode() * 31;
+    }
+}
+class Main {
+     public String s;
+     public Set<Custom> set = new HashSet<>();
+     public int[] markList;
+    public void Try(int time, int idxMark) {
+        if (time > s.length())
+            return;
+        for (int i = 0; i < s.length(); i++) {
+            if (!isContain(markList,idxMark, i)) {
+                markList[idxMark]=i;
+                Try(time + 1, idxMark+1);
+                if (time == s.length()) {
+                   StringBuffer stringBuffer = new StringBuffer();
+                    for(int j=0;j<=idxMark; j++)
+                        stringBuffer.append(s.charAt(markList[j]));
+                   set.add(new Custom(new String(stringBuffer)));
+
+                }
+            }
+
+        }
+
+    }
+
+     public boolean isContain(int[] arr, int length, int value) {
+        for(int i=0; i<length; i++)
+            if(arr[i]==value)
+                return true;
+        return false;
+    }
+
     public static void main(String[] args) throws IOException {
         BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(System.out));
-        s= ns();
-        Try(1);
-        bufferedWriter.write(set.size()+"\n");
-        set.stream().sorted().forEach(e->{
+        Main main = new Main();
+        main.s = ns();
+        main.markList = new int[main.s.length()];
+        main.Try(1,0);
+        bufferedWriter.write(main.set.size() + "\n");
+        main.set.stream().sorted(Comparator.comparing(e -> e.str)).forEach(e -> {
             try {
-                bufferedWriter.write(e+"\n");
+                bufferedWriter.write(e.str + "\n");
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
         });
         bufferedWriter.flush();
         bufferedWriter.close();
- 
+
     }
- 
- 
- 
- 
+
+
     static InputStream is = System.in;
     static byte[] inbuf = new byte[1 << 24];
     static int lenbuf = 0, ptrbuf = 0;
- 
+
     static int readByte() {
         if (lenbuf == -1)
             throw new InputMismatchException();
@@ -74,26 +87,26 @@ public class Main {
         }
         return inbuf[ptrbuf++];
     }
- 
+
     static boolean isSpaceChar(int c) {
         return !(c >= 33 && c <= 126);
     }
- 
+
     static int skip() {
         int b;
         while ((b = readByte()) != -1 && isSpaceChar(b))
             ;
         return b;
     }
- 
+
     static double nd() {
         return Double.parseDouble(ns());
     }
- 
+
     static char nc() {
         return (char) skip();
     }
- 
+
     static String ns() {
         int b = skip();
         StringBuilder sb = new StringBuilder();
@@ -103,7 +116,7 @@ public class Main {
         }
         return sb.toString();
     }
- 
+
     static char[] ns(int n) {
         char[] buf = new char[n];
         int b = skip(), p = 0;
@@ -113,7 +126,7 @@ public class Main {
         }
         return n == p ? buf : Arrays.copyOf(buf, p);
     }
- 
+
     static int ni() {
         int num = 0, b;
         boolean minus = false;
@@ -132,7 +145,7 @@ public class Main {
             b = readByte();
         }
     }
- 
+
     static long nl() {
         long num = 0;
         int b;
@@ -152,5 +165,5 @@ public class Main {
             b = readByte();
         }
     }
- 
+
 }
