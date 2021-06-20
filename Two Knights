@@ -9,7 +9,7 @@ public class Main {
             long sum = (i * i - 1) * (i * i) / 2;
             if (i == 1) bufferedWriter.write(0+"\n");
             else if (i == 2) bufferedWriter.write(6+"\n");
-            else if (i == 3) bufferedWriter.write(sum+"\n");
+            else if (i == 3) bufferedWriter.write(28+"\n");
             else {
                 long x = 3, y = 3;
                 for (long j = 4; j < i; j++) {
